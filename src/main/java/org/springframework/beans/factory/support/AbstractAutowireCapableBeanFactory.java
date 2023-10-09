@@ -23,12 +23,15 @@ import java.lang.reflect.Method;
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
 		implements AutowireCapableBeanFactory {
 
+	/**
+	 * Bean 实例化策略
+	 */
 	private InstantiationStrategy instantiationStrategy = new SimpleInstantiationStrategy();
 
 	@Override
 	protected Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException {
-		//如果bean需要代理，则直接返回代理对象
-		Object bean = resolveBeforeInstantiation(beanName, beanDefinition);
+		// 如果bean需要代理，则直接返回代理对象
+		Object bean = this.resolveBeforeInstantiation(beanName, beanDefinition);
 		if (bean != null) {
 			return bean;
 		}
@@ -80,7 +83,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				});
 			}
 
-			//实例化bean之后执行
+			// 实例化bean之后执行，判断是否需要设置属性值
 			boolean continueWithPropertyPopulation = applyBeanPostProcessorsAfterInstantiation(beanName, bean);
 			if (!continueWithPropertyPopulation) {
 				return bean;
@@ -122,7 +125,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	/**
-	 * bean实例化后执行，如果返回false，不执行后续设置属性的逻辑
+	 * bean 实例化后执行，如果返回 false，不执行后续设置属性的逻辑
 	 *
 	 * @param beanName
 	 * @param bean
@@ -142,7 +145,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	/**
-	 * 在设置bean属性之前，允许BeanPostProcessor修改属性值
+	 * 在设置bean属性之前，允许 BeanPostProcessor 修改属性值，例如处理 @Value，替换 ${} 中的内容
 	 *
 	 * @param beanName
 	 * @param bean
@@ -162,7 +165,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	/**
-	 * 注册有销毁方法的bean，即bean继承自DisposableBean或有自定义的销毁方法
+	 * 注册有销毁方法的bean，即 Bean 继承自 DisposableBean或有自定义的销毁方法
 	 *
 	 * @param beanName
 	 * @param bean
@@ -222,6 +225,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 	}
 
+	/**
+	 * 属性赋值完毕，开始初始化 Bean
+	 *
+	 * @param beanName
+	 * @param bean
+	 * @param beanDefinition
+	 * @return
+	 */
 	protected Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
 		if (bean instanceof BeanFactoryAware) {
 			((BeanFactoryAware) bean).setBeanFactory(this);
@@ -241,6 +252,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		return wrappedBean;
 	}
 
+	/**
+	 * Bean 还未初始化，进行前置处理
+	 *
+	 * @param existingBean
+	 * @param beanName
+	 * @return
+	 * @throws BeansException
+	 */
 	@Override
 	public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName)
 			throws BeansException {
@@ -255,6 +274,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		return result;
 	}
 
+	/**
+	 * Bean 初始化完成，进行后置处理
+	 *
+	 * @param existingBean
+	 * @param beanName
+	 * @return
+	 * @throws BeansException
+	 */
 	@Override
 	public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
 			throws BeansException {
@@ -271,7 +298,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	/**
-	 * 执行bean的初始化方法
+	 * 执行 Bean 的初始化方法
 	 *
 	 * @param beanName
 	 * @param bean
