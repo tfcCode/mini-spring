@@ -6,6 +6,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 
 /**
+ * 使用 cglib 进行 Bean 实例化
+ *
  * @author derekyi
  * @date 2020/11/23
  */

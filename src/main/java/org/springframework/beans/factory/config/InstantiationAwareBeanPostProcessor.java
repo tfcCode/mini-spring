@@ -20,7 +20,7 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException;
 
 	/**
-	 * bean实例化之后，设置属性之前执行
+	 * bean实例化之后，设置属性之前执行，判断是不是需要设置属性，如果不需要，bean 中所有字段均为 null
 	 *
 	 * @param bean
 	 * @param beanName
@@ -30,7 +30,7 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException;
 
 	/**
-	 * bean实例化之后，设置属性之前执行
+	 * bean实例化之后，设置属性之前执行，处理字段上的 @Value、@Autowire 注解
 	 *
 	 * @param pvs
 	 * @param bean
