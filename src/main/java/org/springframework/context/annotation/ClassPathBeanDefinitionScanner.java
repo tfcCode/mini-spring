@@ -44,9 +44,6 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 
 	/**
 	 * 获取bean的作用域
-	 *
-	 * @param beanDefinition
-	 * @return
 	 */
 	private String resolveBeanScope(BeanDefinition beanDefinition) {
 		Class<?> beanClass = beanDefinition.getBeanClass();
@@ -61,9 +58,6 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 
 	/**
 	 * 生成bean的名称
-	 *
-	 * @param beanDefinition
-	 * @return
 	 */
 	private String determineBeanName(BeanDefinition beanDefinition) {
 		Class<?> beanClass = beanDefinition.getBeanClass();

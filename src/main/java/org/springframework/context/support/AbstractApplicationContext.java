@@ -74,15 +74,13 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
 	/**
 	 * 创建BeanFactory，并加载BeanDefinition
-	 *
-	 * @throws BeansException
 	 */
 	protected abstract void refreshBeanFactory() throws BeansException;
 
 	/**
 	 * 在bean实例化之前，执行BeanFactoryPostProcessor
 	 *
-	 * @param beanFactory
+	 * @param beanFactory bean工厂
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
 		Map<String, BeanFactoryPostProcessor> beanFactoryPostProcessorMap = beanFactory.getBeansOfType(BeanFactoryPostProcessor.class);
@@ -94,7 +92,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 	/**
 	 * 注册BeanPostProcessor
 	 *
-	 * @param beanFactory
+	 * @param beanFactory bean工厂
 	 */
 	protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
 		Map<String, BeanPostProcessor> beanPostProcessorMap = beanFactory.getBeansOfType(BeanPostProcessor.class);
