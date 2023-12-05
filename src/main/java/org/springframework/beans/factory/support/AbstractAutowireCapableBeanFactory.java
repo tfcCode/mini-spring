@@ -71,12 +71,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			//为解决循环依赖问题，将实例化后的bean放进缓存中提前暴露
 			if (beanDefinition.isSingleton()) {
 				Object finalBean = bean;
-				addSingletonFactory(beanName, new ObjectFactory<Object>() {
-					@Override
-					public Object getObject() throws BeansException {
-						return getEarlyBeanReference(beanName, beanDefinition, finalBean);
-					}
-				});
+				addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, beanDefinition, finalBean));
 			}
 
 			// 实例化bean之后执行，判断是否需要设置属性值
