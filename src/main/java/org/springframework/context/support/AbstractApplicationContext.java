@@ -117,7 +117,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 	 */
 	protected void registerListeners() {
 		Collection<ApplicationListener> applicationListeners = getBeansOfType(ApplicationListener.class).values();
-		for (ApplicationListener applicationListener : applicationListeners) {
+		for (ApplicationListener<?> applicationListener : applicationListeners) {
 			applicationEventMulticaster.addApplicationListener(applicationListener);
 		}
 	}
@@ -169,13 +169,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 	}
 
 	public void registerShutdownHook() {
-		Thread shutdownHook = new Thread() {
-			public void run() {
-				doClose();
-			}
-		};
+		Thread shutdownHook = new Thread(this::doClose);
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
-
 	}
 
 	protected void doClose() {

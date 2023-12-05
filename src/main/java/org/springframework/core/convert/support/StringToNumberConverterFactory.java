@@ -11,7 +11,7 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
 
 	@Override
 	public <T extends Number> Converter<String, T> getConverter(Class<T> targetType) {
-		return new StringToNumber<T>(targetType);
+		return new StringToNumber<>(targetType);
 	}
 
 	private static final class StringToNumber<T extends Number> implements Converter<String, T> {
@@ -22,6 +22,7 @@ public class StringToNumberConverterFactory implements ConverterFactory<String, 
 			this.targetType = targetType;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public T convert(String source) {
 			if (source.length() == 0) {

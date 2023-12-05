@@ -23,7 +23,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
 	private final Map<String, Object> factoryBeanObjectCache = new HashMap<>();
 
-	private final List<StringValueResolver> embeddedValueResolvers = new ArrayList<StringValueResolver>();
+	private final List<StringValueResolver> embeddedValueResolvers = new ArrayList<>();
 
 	private ConversionService conversionService;
 
@@ -44,14 +44,13 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 	/**
 	 * 如果是FactoryBean，从FactoryBean#getObject中创建bean
 	 *
-	 * @param beanInstance
-	 * @param beanName
-	 * @return
+	 * @param beanInstance bean实例
+	 * @param beanName     bean名称
 	 */
 	protected Object getObjectForBeanInstance(Object beanInstance, String beanName) {
 		Object object = beanInstance;
 		if (beanInstance instanceof FactoryBean) {
-			FactoryBean factoryBean = (FactoryBean) beanInstance;
+			FactoryBean<?> factoryBean = (FactoryBean<?>) beanInstance;
 			try {
 				if (factoryBean.isSingleton()) {
 					//singleton作用域bean，从缓存中获取
@@ -72,6 +71,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 		return object;
 	}
 
+    @SuppressWarnings("unchecked")
 	@Override
 	public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
 		return ((T) getBean(name));

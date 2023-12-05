@@ -13,7 +13,7 @@ import java.util.*;
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
 		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry {
 
-	private Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
+	private final Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
 
 	@Override
 	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
@@ -39,8 +39,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	public <T> Map<String, T> getBeansOfType(Class<T> type) throws BeansException {
 		Map<String, T> result = new HashMap<>();
 		beanDefinitionMap.forEach((beanName, beanDefinition) -> {
-			Class beanClass = beanDefinition.getBeanClass();
+			Class<?> beanClass = beanDefinition.getBeanClass();
 			if (type.isAssignableFrom(beanClass)) {
+				@SuppressWarnings("unchecked")
 				T bean = (T) getBean(beanName);
 				result.put(beanName, bean);
 			}
@@ -51,7 +52,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	public <T> T getBean(Class<T> requiredType) throws BeansException {
 		List<String> beanNames = new ArrayList<>();
 		for (Map.Entry<String, BeanDefinition> entry : beanDefinitionMap.entrySet()) {
-			Class beanClass = entry.getValue().getBeanClass();
+			Class<?> beanClass = entry.getValue().getBeanClass();
 			if (requiredType.isAssignableFrom(beanClass)) {
 				beanNames.add(entry.getKey());
 			}
@@ -60,14 +61,13 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			return getBean(beanNames.get(0), requiredType);
 		}
 
-		throw new BeansException(requiredType + "expected single bean but found " +
-				beanNames.size() + ": " + beanNames);
+		throw new BeansException(requiredType + "expected single bean but found " + beanNames.size() + ": " + beanNames);
 	}
 
 	@Override
 	public String[] getBeanDefinitionNames() {
 		Set<String> beanNames = beanDefinitionMap.keySet();
-		return beanNames.toArray(new String[beanNames.size()]);
+		return beanNames.toArray(new String[0]);
 	}
 
 	@Override

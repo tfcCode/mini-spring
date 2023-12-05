@@ -39,7 +39,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	public static final String INIT_METHOD_ATTRIBUTE = "init-method";
 	public static final String DESTROY_METHOD_ATTRIBUTE = "destroy-method";
 	public static final String SCOPE_ATTRIBUTE = "scope";
-	public static final String LAZYINIT_ATTRIBUTE = "lazyInit";
+	public static final String LAZY_INIT_ATTRIBUTE = "lazyInit";
 	public static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
 	public static final String COMPONENT_SCAN_ELEMENT = "component-scan";
 
@@ -61,11 +61,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	@Override
 	public void loadBeanDefinitions(Resource resource) throws BeansException {
 		try {
-			InputStream inputStream = resource.getInputStream();
-			try {
+			try (InputStream inputStream = resource.getInputStream()) {
 				doLoadBeanDefinitions(inputStream);
-			} finally {
-				inputStream.close();
 			}
 		} catch (IOException | DocumentException ex) {
 			throw new BeansException("IOException parsing XML document from " + resource, ex);
@@ -96,7 +93,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 			String initMethodName = bean.attributeValue(INIT_METHOD_ATTRIBUTE);
 			String destroyMethodName = bean.attributeValue(DESTROY_METHOD_ATTRIBUTE);
 			String beanScope = bean.attributeValue(SCOPE_ATTRIBUTE);
-			String lazyInit = bean.attributeValue(LAZYINIT_ATTRIBUTE);
+			String lazyInit = bean.attributeValue(LAZY_INIT_ATTRIBUTE);
 			Class<?> clazz;
 			try {
 				clazz = Class.forName(className);
@@ -147,7 +144,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	/**
 	 * 扫描注解Component的类，提取信息，组装成BeanDefinition
 	 *
-	 * @param scanPath
+	 * @param scanPath 扫描路径
 	 */
 	private void scanPackage(String scanPath) {
 		String[] basePackages = StrUtil.splitToArray(scanPath, ',');

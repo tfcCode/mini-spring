@@ -1,6 +1,5 @@
 package org.springframework.aop;
 
-import org.aopalliance.intercept.MethodInterceptor;
 import org.springframework.aop.framework.AdvisorChainFactory;
 import org.springframework.aop.framework.DefaultAdvisorChainFactory;
 
@@ -24,11 +23,11 @@ public class AdvisedSupport {
 
 	private MethodMatcher methodMatcher;
 
-	private transient Map<Integer, List<Object>> methodCache;
+	private final transient Map<Integer, List<Object>> methodCache;
 
 	AdvisorChainFactory advisorChainFactory = new DefaultAdvisorChainFactory();
 
-	private List<Advisor> advisors = new ArrayList<>();
+	private final List<Advisor> advisors = new ArrayList<>();
 
 	public AdvisedSupport() {
 		this.methodCache = new ConcurrentHashMap<>(32);

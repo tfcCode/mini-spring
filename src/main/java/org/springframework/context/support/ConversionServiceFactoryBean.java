@@ -23,7 +23,7 @@ public class ConversionServiceFactoryBean implements FactoryBean<ConversionServi
 	private GenericConversionService conversionService;
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		conversionService = new DefaultConversionService();
 		registerConverters(converters, conversionService);
 	}
@@ -46,7 +46,7 @@ public class ConversionServiceFactoryBean implements FactoryBean<ConversionServi
 	}
 
 	@Override
-	public ConversionService getObject() throws Exception {
+	public ConversionService getObject() {
 		return conversionService;
 	}
 

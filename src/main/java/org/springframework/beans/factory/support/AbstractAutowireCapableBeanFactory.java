@@ -41,10 +41,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 	/**
 	 * 执行InstantiationAwareBeanPostProcessor的方法，如果bean需要代理，直接返回代理对象
-	 *
-	 * @param beanName
-	 * @param beanDefinition
-	 * @return
 	 */
 	protected Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
 		Object bean = applyBeanPostProcessorsBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
@@ -54,7 +50,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		return bean;
 	}
 
-	protected Object applyBeanPostProcessorsBeforeInstantiation(Class beanClass, String beanName) {
+	protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) {
 		for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
 			if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
 				Object result = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessBeforeInstantiation(beanClass, beanName);
@@ -116,7 +112,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (bp instanceof InstantiationAwareBeanPostProcessor) {
 				exposedObject = ((InstantiationAwareBeanPostProcessor) bp).getEarlyBeanReference(exposedObject, beanName);
 				if (exposedObject == null) {
-					return exposedObject;
+					return null;
 				}
 			}
 		}

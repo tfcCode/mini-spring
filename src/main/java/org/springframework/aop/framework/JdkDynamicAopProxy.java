@@ -38,7 +38,7 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
 		// 获取目标对象
 		Object target = advised.getTargetSource().getTarget();
 		Class<?> targetClass = target.getClass();
-		Object retVal = null;
+		Object retVal;
 		// 获取拦截器链
 		List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 		if (chain == null || chain.isEmpty()) {
@@ -47,7 +47,7 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
 			// 将拦截器统一封装成ReflectiveMethodInvocation
 			MethodInvocation invocation =
 					new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
-			// Proceed to the joinpoint through the interceptor chain.
+			// Proceed to the joinPoint through the interceptor chain.
 			// 执行拦截器链
 			retVal = invocation.proceed();
 		}

@@ -16,7 +16,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 
 	public static final String AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME = "org.springframework.context.annotation.internalAutowiredAnnotationProcessor";
 
-	private BeanDefinitionRegistry registry;
+	private final BeanDefinitionRegistry registry;
 
 	public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {
 		this.registry = registry;

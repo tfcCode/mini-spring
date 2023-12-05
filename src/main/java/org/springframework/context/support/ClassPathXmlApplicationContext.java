@@ -10,7 +10,7 @@ import org.springframework.beans.BeansException;
  */
 public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContext {
 
-	private String[] configLocations;
+	private final String[] configLocations;
 
 	/**
 	 * 从xml文件加载BeanDefinition，并且自动刷新上下文

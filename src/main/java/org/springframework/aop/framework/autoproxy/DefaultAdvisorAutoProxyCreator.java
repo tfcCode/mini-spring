@@ -27,7 +27,7 @@ public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPos
 
 	private DefaultListableBeanFactory beanFactory;
 
-	private Set<Object> earlyProxyReferences = new HashSet<>();
+	private final Set<Object> earlyProxyReferences = new HashSet<>();
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {

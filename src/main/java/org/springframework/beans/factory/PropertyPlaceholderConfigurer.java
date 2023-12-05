@@ -39,8 +39,6 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
 
 	/**
 	 * 加载属性配置文件
-	 *
-	 * @return
 	 */
 	private Properties loadProperties() {
 		try {
@@ -57,9 +55,8 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
 	/**
 	 * 属性值替换占位符
 	 *
-	 * @param beanFactory
-	 * @param properties
-	 * @throws BeansException
+	 * @param beanFactory bean工厂
+	 * @param properties  配置文件对象
 	 */
 	private void processProperties(ConfigurableListableBeanFactory beanFactory, Properties properties) throws BeansException {
 		String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
@@ -82,16 +79,15 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
 
 	private String resolvePlaceholder(String value, Properties properties) {
 		//TODO 仅简单支持一个占位符的格式
-		String strVal = value;
-		StringBuffer buf = new StringBuffer(strVal);
-		int startIndex = strVal.indexOf(PLACEHOLDER_PREFIX);
-		int endIndex = strVal.indexOf(PLACEHOLDER_SUFFIX);
+		StringBuilder builder = new StringBuilder(value);
+		int startIndex = value.indexOf(PLACEHOLDER_PREFIX);
+		int endIndex = value.indexOf(PLACEHOLDER_SUFFIX);
 		if (startIndex != -1 && endIndex != -1 && startIndex < endIndex) {
-			String propKey = strVal.substring(startIndex + 2, endIndex);
+			String propKey = value.substring(startIndex + 2, endIndex);
 			String propVal = properties.getProperty(propKey);
-			buf.replace(startIndex, endIndex + 1, propVal);
+			builder.replace(startIndex, endIndex + 1, propVal);
 		}
-		return buf.toString();
+		return builder.toString();
 	}
 
 	public void setLocation(String location) {

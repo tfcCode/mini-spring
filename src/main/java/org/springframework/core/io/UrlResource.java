@@ -20,10 +20,6 @@ public class UrlResource implements Resource {
 	@Override
 	public InputStream getInputStream() throws IOException {
 		URLConnection con = this.url.openConnection();
-		try {
-			return con.getInputStream();
-		} catch (IOException ex) {
-			throw ex;
-		}
+		return con.getInputStream();
 	}
 }
