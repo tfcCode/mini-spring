@@ -10,7 +10,6 @@ import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.*;
 import org.springframework.core.convert.ConversionService;
 
@@ -28,6 +27,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	private InstantiationStrategy instantiationStrategy = new SimpleInstantiationStrategy();
 
+	/**
+	 * 创建 bean 实例
+	 *
+	 * @param beanName       bean名称
+	 * @param beanDefinition bean定义
+	 */
 	@Override
 	protected Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException {
 		// 如果bean需要代理，则直接返回代理对象
@@ -40,7 +45,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	/**
-	 * 执行InstantiationAwareBeanPostProcessor的方法，如果bean需要代理，直接返回代理对象
+	 * 执行 InstantiationAwareBeanPostProcessor 的方法，如果 bean 需要代理，直接返回代理对象
+	 *
+	 * @param beanName       bean名称
+	 * @param beanDefinition bean定义
 	 */
 	protected Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
 		Object bean = applyBeanPostProcessorsBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
@@ -59,7 +67,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}
 			}
 		}
-
 		return null;
 	}
 
@@ -71,7 +78,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			//为解决循环依赖问题，将实例化后的bean放进缓存中提前暴露
 			if (beanDefinition.isSingleton()) {
 				Object finalBean = bean;
-				addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, beanDefinition, finalBean));
+				addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, finalBean));
 			}
 
 			// 实例化bean之后执行，判断是否需要设置属性值
@@ -101,7 +108,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		return exposedObject;
 	}
 
-	protected Object getEarlyBeanReference(String beanName, BeanDefinition beanDefinition, Object bean) {
+	/**
+	 * 为解决循环依赖问题，提前获取 bean 引用
+	 *
+	 * @param beanName bean名称
+	 * @param bean     bean实例
+	 */
+	protected Object getEarlyBeanReference(String beanName, Object bean) {
 		Object exposedObject = bean;
 		for (BeanPostProcessor bp : getBeanPostProcessors()) {
 			if (bp instanceof InstantiationAwareBeanPostProcessor) {
@@ -111,16 +124,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}
 			}
 		}
-
 		return exposedObject;
 	}
 
 	/**
 	 * bean 实例化后执行，如果返回 false，不执行后续设置属性的逻辑
 	 *
-	 * @param beanName
-	 * @param bean
-	 * @return
+	 * @param beanName bean名称
+	 * @param bean     bean实
 	 */
 	private boolean applyBeanPostProcessorsAfterInstantiation(String beanName, Object bean) {
 		boolean continueWithPropertyPopulation = true;
@@ -138,9 +149,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * 在设置bean属性之前，允许 BeanPostProcessor 修改属性值，例如处理 @Value，替换 ${} 中的内容
 	 *
-	 * @param beanName
-	 * @param bean
-	 * @param beanDefinition
+	 * @param beanName       bean名称
+	 * @param bean           bean实例
+	 * @param beanDefinition bean定义
 	 */
 	protected void applyBeanPostProcessorsBeforeApplyingPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
 		for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
@@ -158,9 +169,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * 注册有销毁方法的bean，即 Bean 继承自 DisposableBean或有自定义的销毁方法
 	 *
-	 * @param beanName
-	 * @param bean
-	 * @param beanDefinition
+	 * @param beanName       bean名称
+	 * @param bean           bean实例
+	 * @param beanDefinition bean定义
 	 */
 	protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
 		//只有singleton类型bean会执行销毁方法
@@ -174,8 +185,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * 实例化bean
 	 *
-	 * @param beanDefinition
-	 * @return
+	 * @param beanDefinition bean定义
 	 */
 	protected Object createBeanInstance(BeanDefinition beanDefinition) {
 		return getInstantiationStrategy().instantiate(beanDefinition);
@@ -184,8 +194,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * 为bean填充属性
 	 *
-	 * @param bean
-	 * @param beanDefinition
+	 * @param bean           bean实例
+	 * @param beanDefinition bean定义
 	 */
 	protected void applyPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
 		try {
@@ -219,10 +229,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * 属性赋值完毕，开始初始化 Bean
 	 *
-	 * @param beanName
-	 * @param bean
-	 * @param beanDefinition
-	 * @return
+	 * @param beanName       bean名称
+	 * @param bean           bean实例
+	 * @param beanDefinition bean定义
 	 */
 	protected Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
 		if (bean instanceof BeanFactoryAware) {
@@ -246,10 +255,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * Bean 还未初始化，进行前置处理
 	 *
-	 * @param existingBean
-	 * @param beanName
-	 * @return
-	 * @throws BeansException
+	 * @param existingBean bean实例
+	 * @param beanName     bean名称
 	 */
 	@Override
 	public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName)
@@ -268,10 +275,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * Bean 初始化完成，进行后置处理
 	 *
-	 * @param existingBean
-	 * @param beanName
-	 * @return
-	 * @throws BeansException
+	 * @param existingBean bean实例
+	 * @param beanName     bean名称
 	 */
 	@Override
 	public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
@@ -291,10 +296,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * 执行 Bean 的初始化方法
 	 *
-	 * @param beanName
-	 * @param bean
-	 * @param beanDefinition
-	 * @throws Throwable
+	 * @param beanName bean名称
+	 * @param bean bean实例
+	 * @param beanDefinition  bean定义
 	 */
 	protected void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition) throws Throwable {
 		if (bean instanceof InitializingBean) {
